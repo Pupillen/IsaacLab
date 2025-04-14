@@ -71,8 +71,8 @@ import isaaclab_tasks  # noqa: F401
 from isaaclab_tasks.utils.hydra import hydra_task_config
 
 # PLACEHOLDER: Extension template (do not remove this comment)
-
-
+# env_cfg:<class 'isaaclab_tasks.direct.cartpole.cartpole_env.CartpoleEnvCfg'>即是source/isaaclab_tasks/isaaclab_tasks/direct/cartpole/cartpole_env.py中的定义类
+# agent_cfg: source/isaaclab_tasks/isaaclab_tasks/direct/cartpole/__init__.py中制订的yaml文件 对应的参数对们      "rl_games_cfg_entry_point": f"{agents.__name__}:rl_games_ppo_cfg.yaml",#参数文件。对应于yaml文件
 @hydra_task_config(args_cli.task, "rl_games_cfg_entry_point")
 def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agent_cfg: dict):
     """Train with RL-Games agent."""

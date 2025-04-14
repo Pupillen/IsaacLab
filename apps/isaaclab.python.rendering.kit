@@ -34,6 +34,17 @@ app.versionFile = "${exe-path}/VERSION"
 app.folder = "${exe-path}/"
 app.name = "Isaac-Sim"
 app.version = "4.5.0"
+persistent.isaac.asset_root.default = "/home/ztr/isaacsim_assets/Assets/Isaac/4.5"
+exts."isaacsim.asset.browser".folders = [
+    "/home/ztr/isaacsim_assets/Assets/Isaac/4.5/Isaac/Robots",
+    "/home/ztr/isaacsim_assets/Assets/Isaac/4.5/Isaac/People",
+    "/home/ztr/isaacsim_assets/Assets/Isaac/4.5/Isaac/IsaacLab",
+    "/home/ztr/isaacsim_assets/Assets/Isaac/4.5/Isaac/Props",
+    "/home/ztr/isaacsim_assets/Assets/Isaac/4.5/Isaac/Environments",
+    "/home/ztr/isaacsim_assets/Assets/Isaac/4.5/Isaac/Materials",
+    "/home/ztr/isaacsim_assets/Assets/Isaac/4.5/Isaac/Samples",
+    "/home/ztr/isaacsim_assets/Assets/Isaac/4.5/Isaac/Sensors",
+]
 
 # Disable print outs on extension startup information
 # this only disables the app print_and_log function

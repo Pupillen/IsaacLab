@@ -59,13 +59,13 @@ class CartpoleEnv(DirectRLEnv):
 
     def __init__(self, cfg: CartpoleEnvCfg, render_mode: str | None = None, **kwargs):
         super().__init__(cfg, render_mode, **kwargs)
-
+        # DirectRLEnv父类的__init__方法会调用_setup_scene()方法，而_setup_scene()方法正是在子类CartpoleEnv中被重写的
         self._cart_dof_idx, _ = self.cartpole.find_joints(self.cfg.cart_dof_name)
         self._pole_dof_idx, _ = self.cartpole.find_joints(self.cfg.pole_dof_name)
         self.action_scale = self.cfg.action_scale
 
-        self.joint_pos = self.cartpole.data.joint_pos
-        self.joint_vel = self.cartpole.data.joint_vel
+        self.joint_pos = self.cartpole.data.joint_pos#torch.Size([4096, 2])
+        self.joint_vel = self.cartpole.data.joint_vel#torch.Size([4096, 2])
 
     def _setup_scene(self):
         self.cartpole = Articulation(self.cfg.robot_cfg)
@@ -113,11 +113,11 @@ class CartpoleEnv(DirectRLEnv):
         )
         return total_reward
 
-    def _get_dones(self) -> tuple[torch.Tensor, torch.Tensor]:
+    def _get_dones(self) -> tuple[torch.Tensor, torch.Tensor]:#序列化的环境索引
         self.joint_pos = self.cartpole.data.joint_pos
         self.joint_vel = self.cartpole.data.joint_vel
 
-        time_out = self.episode_length_buf >= self.max_episode_length - 1
+        time_out = self.episode_length_buf >= self.max_episode_length - 1#source/isaaclab/isaaclab/envs/direct_rl_env.py也即与episode_length_s = 5.0有关
         out_of_bounds = torch.any(torch.abs(self.joint_pos[:, self._cart_dof_idx]) > self.cfg.max_cart_pos, dim=1)
         out_of_bounds = out_of_bounds | torch.any(torch.abs(self.joint_pos[:, self._pole_dof_idx]) > math.pi / 2, dim=1)
         return out_of_bounds, time_out

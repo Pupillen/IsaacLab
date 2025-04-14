@@ -1,7 +1,8 @@
 ![Isaac Lab](docs/source/_static/isaaclab.jpg)
 
 ---
-
+echo "fs.inotify.max_user_watches=9999999" | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
 # Isaac Lab
 
 [![IsaacSim](https://img.shields.io/badge/IsaacSim-4.5.0-silver.svg)](https://docs.isaacsim.omniverse.nvidia.com/latest/index.html)

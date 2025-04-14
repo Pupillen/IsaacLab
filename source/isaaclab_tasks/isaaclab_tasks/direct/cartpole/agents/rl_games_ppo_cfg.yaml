@@ -52,7 +52,7 @@ params:
     mixed_precision: False
     normalize_input: True
     normalize_value: True
-    num_actors: -1  # configured from the script (based on num_envs)
+    num_actors: -1  #根据环境的n数目来决定，    # set number of actors into agent config通过这个代码来确定 agent_cfg["params"]["config"]["num_actors"] = env.unwrapped.num_envs configured from the script (based on num_envs)
     reward_shaper:
       scale_value: 0.1
     normalize_advantage: True
