@@ -88,14 +88,14 @@ class CartpoleEnv(DirectRLEnv):
     def _get_observations(self) -> dict:
         obs = torch.cat(
             (
-                self.joint_pos[:, self._pole_dof_idx[0]].unsqueeze(dim=1),
+                self.joint_pos[:, self._pole_dof_idx[0]].unsqueeze(dim=1),#torch.Size([4096, 1])
                 self.joint_vel[:, self._pole_dof_idx[0]].unsqueeze(dim=1),
                 self.joint_pos[:, self._cart_dof_idx[0]].unsqueeze(dim=1),
                 self.joint_vel[:, self._cart_dof_idx[0]].unsqueeze(dim=1),
             ),
             dim=-1,
         )
-        observations = {"policy": obs}
+        observations = {"policy": obs}#torch.Size([4096, 4]),按照pole位置与速度与cart位置与速度进行拼接
         return observations
 
     def _get_rewards(self) -> torch.Tensor:
@@ -111,39 +111,40 @@ class CartpoleEnv(DirectRLEnv):
             self.joint_vel[:, self._cart_dof_idx[0]],
             self.reset_terminated,
         )
-        return total_reward
+        return total_reward#torch.Size([4096])
 
     def _get_dones(self) -> tuple[torch.Tensor, torch.Tensor]:#序列化的环境索引
         self.joint_pos = self.cartpole.data.joint_pos
         self.joint_vel = self.cartpole.data.joint_vel
-
+        #time_out torch.Size([4096]) 是true与false的tensor
         time_out = self.episode_length_buf >= self.max_episode_length - 1#source/isaaclab/isaaclab/envs/direct_rl_env.py也即与episode_length_s = 5.0有关
         out_of_bounds = torch.any(torch.abs(self.joint_pos[:, self._cart_dof_idx]) > self.cfg.max_cart_pos, dim=1)
         out_of_bounds = out_of_bounds | torch.any(torch.abs(self.joint_pos[:, self._pole_dof_idx]) > math.pi / 2, dim=1)
         return out_of_bounds, time_out
-
+    #对环境状态进行重置
     def _reset_idx(self, env_ids: Sequence[int] | None):
         if env_ids is None:
-            env_ids = self.cartpole._ALL_INDICES
+            env_ids = self.cartpole._ALL_INDICES#tensor([   0,    1,    2,  ..., 4093, 4094, 4095], device='cuda:0')环境个数的tensor
+
         super()._reset_idx(env_ids)
 
-        joint_pos = self.cartpole.data.default_joint_pos[env_ids]
+        joint_pos = self.cartpole.data.default_joint_pos[env_ids]#torch.Size([4096, 2])
         joint_pos[:, self._pole_dof_idx] += sample_uniform(
             self.cfg.initial_pole_angle_range[0] * math.pi,
             self.cfg.initial_pole_angle_range[1] * math.pi,
             joint_pos[:, self._pole_dof_idx].shape,
             joint_pos.device,
-        )
-        joint_vel = self.cartpole.data.default_joint_vel[env_ids]
+        )#环境个数的tensor。torch.Size([4096, 1])
+        joint_vel = self.cartpole.data.default_joint_vel[env_ids]#torch.Size([4096, 2])
 
-        default_root_state = self.cartpole.data.default_root_state[env_ids]
-        default_root_state[:, :3] += self.scene.env_origins[env_ids]
+        default_root_state = self.cartpole.data.default_root_state[env_ids]#torch.Size([4096, 13])
+        default_root_state[:, :3] += self.scene.env_origins[env_ids]#torch.Size([4096, 3])环境的偏移原点的坐标
 
         self.joint_pos[env_ids] = joint_pos
         self.joint_vel[env_ids] = joint_vel
 
-        self.cartpole.write_root_pose_to_sim(default_root_state[:, :7], env_ids)
-        self.cartpole.write_root_velocity_to_sim(default_root_state[:, 7:], env_ids)
+        self.cartpole.write_root_pose_to_sim(default_root_state[:, :7], env_ids)# (len(env_ids), 7).   x,y,z,,qw,qx,qy,qz位置与姿态四元数
+        self.cartpole.write_root_velocity_to_sim(default_root_state[:, 7:], env_ids)#（len(env_ids), 6）vx,vy,vz,wx,wy,wz速度
         self.cartpole.write_joint_state_to_sim(joint_pos, joint_vel, None, env_ids)
 
 
