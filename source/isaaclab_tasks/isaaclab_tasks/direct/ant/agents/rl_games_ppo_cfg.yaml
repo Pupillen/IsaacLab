@@ -35,8 +35,8 @@ params:
       regularizer:
         name: None
 
-  load_checkpoint: False # flag which sets whether to load the checkpoint
-  load_path: '' # path to the checkpoint to load
+  load_checkpoint: True # flag which sets whether to load the checkpoint
+  load_path: '/home/ztr/IsaacLab/logs/rl_games/ant/2025-04-14_16-14-50/nn/last_ant_ep_500_rew_77.055626.pth' # path to the checkpoint to load
 
   config:
     name: ant_direct

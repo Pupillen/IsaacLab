@@ -10,10 +10,10 @@ params:
 
   algo:
     name: a2c_continuous
-
+# /home/ztr/miniconda3/envs/env_isaaclab/lib/python3.10/site-packages/rl_games/algos_torch/players.py  a2c_continuous
   model:
     name: continuous_a2c_logstd
-
+# network': <rl_games.algos_torch.models.ModelA2CContinuousLogStd object at 0x701a91823250
   # doesn't have this fine grained control but made it close
   network:
     name: actor_critic
@@ -39,8 +39,8 @@ params:
       regularizer:
         name: None
 
-  load_checkpoint: False # flag which sets whether to load the checkpoint
-  load_path: '' # path to the checkpoint to load
+  load_checkpoint: True # flag which sets whether to load the checkpoint
+  load_path: '/home/ztr/IsaacLab/logs/rl_games/cartpole_direct/2025-04-14_21-48-36/nn/last_cartpole_direct_ep_25_rew_293.4907.pth' # path to the checkpoint to load
 
   config:
     name: cartpole_direct
